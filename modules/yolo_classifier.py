@@ -7,11 +7,10 @@ import torch
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
+
 class YoloClassifier:
     def __init__(self, model_path):
         self.load_model(model_path, model_type=model_path.split(".")[-1])
-        #self.names = ['Romano', 'Unlabel', 'Xmen']
-        
 
     def load_model(self, model_path, model_type):
         if model_type == "onnx":
@@ -82,10 +81,6 @@ class YoloClassifier:
         cls_name = self.names[torch.argmax(prob)]
         
         return cls_name, result
-    
-    
-        
-
 
 if __name__ == '__main__':
     import glob

@@ -114,10 +114,10 @@ class YoloDetect:
             ]
 
             points = list(dict.fromkeys(points))
-            img = self.draw_bounding_boxes(img, bboxes, Polygon(points), saved_crop=True)
+            img, logs = self.draw_bounding_boxes(img, bboxes, Polygon(points), saved_crop=True)
             
         
-        return img, bboxes, scores
+        return img, bboxes, scores, logs
 
 
     def draw_bounding_boxes(self, image, boxes, polygon, saved_crop=True, opt_path='predict'):
@@ -133,7 +133,8 @@ class YoloDetect:
             import shutil
             
             shutil.rmtree(ppath)
-            
+        logs = dict()
+        id = 1
         for i in range(len(boxes)):
             x1, y1, x2, y2 = boxes[i]
 
@@ -143,8 +144,14 @@ class YoloDetect:
                     output_file = str(self.increment_path(f'{opt_path}/opt.jpg', mkdir=True).with_suffix('.jpg'))
                     cv2.imwrite(output_file, crop)
                     
-                cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        return image
+                #cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                if i == 0:
+                    logs.update({'opt.jpg' : boxes[i]})
+                else:
+                    logs.update({f'opt{id}.jpg' : boxes[i]})
+                id +=1
+                
+        return image, logs
 
     def increment_path(self, path, exist_ok=False, sep='', mkdir=False):
         path = Path(path)
